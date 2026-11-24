@@ -93,6 +93,8 @@ const _dict = {
     world_3: "Demo 1",
     world_easy: "Easy",
     world_difficult: "Hard",
+    world_levels: "Levels",
+    level_clear_banner: "LEVEL CLEAR",
     world_leaderboard_title: "Leaderboard",
     world_leaderboard_button: "Speed-running Leaderboard",
     leaderboard_page_title: "Global Leaderboard",
@@ -301,6 +303,8 @@ const _dict = {
     world_3: "初代 Demo",
     world_easy: "简单",
     world_difficult: "困难",
+    world_levels: "关卡",
+    level_clear_banner: "通关成功",
     world_leaderboard_title: "排行榜",
     world_leaderboard_button: "竞速排行榜",
     leaderboard_page_title: "全局排行榜",
@@ -432,7 +436,8 @@ function _syncDocumentLanguage() {
   document.title = _dict[_lang]?.app_title ?? "U help U";
 
   const navHint = document.getElementById("global-nav-hint");
-  if (navHint) {
+  // 尚未选择语言时保留 index.html 中的双语提示，选择语言后再切成单语
+  if (navHint && localStorage.getItem(LANG_STORAGE_KEY)) {
     navHint.textContent = _dict[_lang]?.global_nav_hint ?? "";
   }
 }

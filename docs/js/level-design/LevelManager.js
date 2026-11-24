@@ -41,6 +41,127 @@ export class LevelManager {
 
     // Portal transition effect
     this.portalTransition = null;
+
+    // Level-clear animation state (null when inactive)
+    // 通关动画状态（未播放时为 null）
+    this.winAnim = null;
+  }
+
+  isWinAnimationActive() {
+    return !!this.winAnim;
+  }
+
+  /**
+   * Freeze the game and play the level-clear animation, then call onDone.
+   * 冻结游戏并播放通关动画，结束后调用 onDone。
+   */
+  startWinAnimation(onDone, p = this.p) {
+    if (this.winAnim) return;
+    this.setPaused(true);
+
+    const portal = (this.level?.entities || []).find(
+      (e) => e.type === "portal",
+    );
+    const player = this.level?.getPlayer?.();
+    const src = portal || player;
+    const w = src?.collider?.w ?? 0;
+    const h = src?.collider?.h ?? 0;
+
+    const sparks = Array.from({ length: 36 }, () => ({
+      angle: Math.random() * Math.PI * 2,
+      speed: 0.25 + Math.random() * 0.55,
+      size: 3 + Math.random() * 5,
+      hue: Math.random() < 0.5 ? [255, 215, 120] : [190, 225, 255],
+    }));
+
+    this.winAnim = {
+      startedAtMs: p?.millis ? p.millis() : performance.now(),
+      durationMs: 2300,
+      // world-space centre; converted to screen each frame (camera nudge)
+      worldX: src ? src.x + w / 2 : null,
+      worldY: src ? src.y + h / 2 : null,
+      sparks,
+      onDone,
+    };
+  }
+
+  drawWinAnimation(p = this.p, nudgeX = 0) {
+    const a = this.winAnim;
+    if (!a) return false;
+
+    const nowMs = p?.millis ? p.millis() : performance.now();
+    const elapsed = nowMs - a.startedAtMs;
+    const total = a.durationMs;
+    const clamp01 = (v) => Math.max(0, Math.min(1, v));
+    const easeOut = (v) => 1 - Math.pow(1 - v, 3);
+
+    // screen-space origin (scene is Y-flipped)
+    const cx = a.worldX != null ? a.worldX - nudgeX : p.width / 2;
+    const cy = a.worldY != null ? p.height - a.worldY : p.height / 2;
+    const maxR = Math.hypot(
+      Math.max(cx, p.width - cx),
+      Math.max(cy, p.height - cy),
+    );
+
+    p.push();
+    p.resetMatrix();
+    p.noStroke();
+
+    // Phase 1 (0–900ms): glowing rings + sparks burst out of the portal
+    const burstT = clamp01(elapsed / 900);
+    for (let i = 0; i < 3; i++) {
+      const rt = clamp01(burstT * 1.4 - i * 0.22);
+      if (rt <= 0) continue;
+      p.noFill();
+      p.stroke(255, 230, 150, 230 * (1 - rt));
+      p.strokeWeight(5 - i);
+      const r = easeOut(rt) * 170;
+      p.circle(cx, cy, r * 2);
+    }
+    p.noStroke();
+    for (const s of a.sparks) {
+      const d = easeOut(clamp01(elapsed / 1400)) * s.speed * 420;
+      const alpha = 255 * (1 - clamp01(elapsed / 1500));
+      p.fill(s.hue[0], s.hue[1], s.hue[2], alpha);
+      p.rect(
+        cx + Math.cos(s.angle) * d - s.size / 2,
+        cy + Math.sin(s.angle) * d - s.size / 2,
+        s.size,
+        s.size,
+      );
+    }
+
+    // Phase 2 (400–1500ms): white iris expands from the portal
+    const irisT = clamp01((elapsed - 400) / 1100);
+    if (irisT > 0) {
+      p.fill(255, 255, 255, 255);
+      p.circle(cx, cy, easeOut(irisT) * maxR * 2);
+    }
+
+    // Phase 3 (1000–2300ms): banner text on the white screen
+    const textT = clamp01((elapsed - 1000) / 500);
+    if (textT > 0) {
+      const scale = 0.8 + 0.2 * easeOut(textT);
+      p.textAlign(p.CENTER, p.CENTER);
+      if (Assets.customFont) p.textFont(Assets.customFont);
+      p.textStyle(p.BOLD);
+      const size = Math.max(40, Math.floor(p.width * 0.055)) * scale;
+      p.textSize(size);
+      p.fill(200, 80, 180, 70 * textT);
+      p.text(t("level_clear_banner"), p.width / 2 + 3, p.height / 2 + 3);
+      p.fill(190, 70, 170, 255 * textT);
+      p.text(t("level_clear_banner"), p.width / 2, p.height / 2);
+    }
+
+    p.pop();
+
+    if (elapsed >= total) {
+      const done = a.onDone;
+      this.winAnim = null;
+      if (typeof done === "function") done();
+      return true;
+    }
+    return false;
   }
 
   startLevelTitleOverlay(levelIndex, p = this.p) {
@@ -201,6 +322,7 @@ export class LevelManager {
     if (this.level) {
       this.level.clearLevel(p, eventBus);
       this.level = null;
+      this.winAnim = null;
       this._pendingDeathReload = null;
       this._checkpointSystem.resetLevelState();
       this.cameraNudgeX = 0;
@@ -317,6 +439,9 @@ export class LevelManager {
     p.pop();
 
     this.drawLevelTitleOverlay(p);
+    // After the level-clear callback runs, the level may be unloaded/replaced.
+    // 通关动画回调执行后关卡可能已被卸载/替换，所以放在最后。
+    if (this.winAnim) this.drawWinAnimation(p, renderNudgeX);
     // NOTE: vignette overlay is drawn in AppCoordinator (after resetMatrix)
   }
 

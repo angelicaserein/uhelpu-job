@@ -1,5 +1,6 @@
 import { PageBase } from "../PageBase.js";
 import { Assets } from "../../../AssetsManager.js";
+import { EventTypes } from "../../../event-system/EventTypes.js";
 import { i18n } from "../../../i18n/index.js";
 
 function makePanel(glyph, name, hint) {
@@ -31,6 +32,18 @@ export class LanguageChoice extends PageBase {
     };
   }
 
+  // 首次：选完语言直接进第一关；之后再来：去选关卡页面
+  _enterFirstLevel() {
+    const KEY = "kinoko_first_level_entered";
+    const bus = this.switcher.eventBus;
+    if (localStorage.getItem(KEY) || !bus) {
+      this.switcher.showLevelChoiceEasy(this.p);
+      return;
+    }
+    localStorage.setItem(KEY, "1");
+    bus.publish(EventTypes.LOAD_LEVEL, "easy_level1");
+  }
+
   enter() {
     super.enter();
 
@@ -44,7 +57,7 @@ export class LanguageChoice extends PageBase {
       // 已保存语言，直接进入游戏，跳过语言选择
       console.log("[LanguageChoice] Found saved language, skipping to game");
       i18n.setLang(savedLang);
-      this.switcher.showWorldSelect(p);
+      this._enterFirstLevel();
       return;
     }
 
@@ -55,7 +68,7 @@ export class LanguageChoice extends PageBase {
     enPanel.addClass("language-panel lang-panel-left");
     enPanel.mouseClicked(() => {
       i18n.setLang("en");
-      this.switcher.showWorldSelect(p);
+      this._enterFirstLevel();
     });
     this.addElement(enPanel);
 
@@ -64,7 +77,7 @@ export class LanguageChoice extends PageBase {
     zhPanel.addClass("language-panel lang-panel-right");
     zhPanel.mouseClicked(() => {
       i18n.setLang("zh");
-      this.switcher.showWorldSelect(p);
+      this._enterFirstLevel();
     });
     this.addElement(zhPanel);
 
@@ -75,14 +88,14 @@ export class LanguageChoice extends PageBase {
           btn: enPanel,
           callback: () => {
             i18n.setLang("en");
-            this.switcher.showWorldSelect(p);
+            this._enterFirstLevel();
           },
         },
         {
           btn: zhPanel,
           callback: () => {
             i18n.setLang("zh");
-            this.switcher.showWorldSelect(p);
+            this._enterFirstLevel();
           },
         },
       ],

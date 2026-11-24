@@ -10,6 +10,7 @@ import { LevelManager } from "./level-design/LevelManager.js";
 import { StaticPageResultDemo2 } from "./ui/pages/static-pages/StaticPageResultDemo2.js";
 import { StaticPageWinEasy } from "./ui/pages/static-pages/StaticPageWinEasy.js";
 import { AudioManager } from "./AudioManager.js";
+import { LevelProgress } from "./level-design/LevelProgress.js";
 
 export class AppCoordinator {
   constructor(p) {
@@ -139,16 +140,13 @@ export class AppCoordinator {
       this.levelManager.unloadLevel(this.p, this.eventBus);
       this.switcher.gameSwitcher.runtimeLevelManager = null;
 
-      const choiceScreens = {
-        easy: () => this.switcher.staticSwitcher.showLevelChoiceEasy(this.p),
-        hard: () => this.switcher.staticSwitcher.showLevelChoiceHard(this.p),
-        special: () =>
-          this.switcher.staticSwitcher.showLevelChoiceSpecial(this.p),
-      };
-      (
-        choiceScreens[mode] ??
-        (() => this.switcher.staticSwitcher.showWorldSelect(this.p))
-      )();
+      // Only one level-select page now (the original 10-level UI).
+      // 现在只有一个选关页（原来的 10 关 UI）。
+      if (mode === "unknown") {
+        this.switcher.staticSwitcher.showWorldSelect(this.p);
+      } else {
+        this.switcher.staticSwitcher.showLevelChoiceEasy(this.p);
+      }
     });
 
     this.eventBus.subscribe(EventTypes.AUTO_RESULT, (result) => {
@@ -156,25 +154,22 @@ export class AppCoordinator {
       const mode = this._getLevelMode(levelIndex);
 
       if (result === "autoResult1") {
-        this._pendingTimerSnapshot = null;
-        this.levelManager.unloadLevel(this.p, this.eventBus);
-        this.switcher.gameSwitcher.runtimeLevelManager = null;
+        // Ignore repeated triggers while the win animation is playing.
+        // 胜利动画播放期间忽略重复触发。
+        if (this.levelManager.isWinAnimationActive()) return;
 
-        // Map difficulty mode to its win-screen class.
-        // 将难度模式映射到对应的胜利界面类。
-        const winPageMap = {
-          easy: StaticPageWinEasy,
-          hard: StaticPageWinEasy,
-          special: StaticPageWinEasy,
-        };
-        const WinPage = winPageMap[mode] ?? StaticPageWinEasy;
-        const winPage = new WinPage(
-          levelIndex,
-          this.switcher,
-          this.p,
-          this.eventBus,
-        );
-        this.switcher.switchToStatic(winPage, this.p);
+        LevelProgress.markCompleted(levelIndex);
+        const nextLevelId = LevelProgress.getNext(levelIndex);
+
+        this.levelManager.startWinAnimation(() => {
+          // Auto-advance to the next level; only the final level shows the win page.
+          // 自动进入下一关；只有最后一关才显示胜利页。
+          if (nextLevelId) {
+            this.eventBus.publish(EventTypes.LOAD_LEVEL, nextLevelId);
+            return;
+          }
+          this._showFinalWinPage(levelIndex, mode);
+        });
         return;
       }
 
@@ -206,6 +201,24 @@ export class AppCoordinator {
     this.eventBus.subscribe(EventTypes.RESUME_GAME, () => {
       this.levelManager.setPaused(false);
     });
+  }
+
+  /**
+   * Win page shown after the last level of the linear sequence.
+   * 线性关卡序列最后一关通关后显示的胜利页。
+   */
+  _showFinalWinPage(levelIndex) {
+    this._pendingTimerSnapshot = null;
+    this.levelManager.setPaused(false);
+    this.levelManager.unloadLevel(this.p, this.eventBus);
+    this.switcher.gameSwitcher.runtimeLevelManager = null;
+    const winPage = new StaticPageWinEasy(
+      levelIndex,
+      this.switcher,
+      this.p,
+      this.eventBus,
+    );
+    this.switcher.switchToStatic(winPage, this.p);
   }
 
   /**

@@ -28,18 +28,8 @@ export class StaticPageWorldSelect extends PageBase {
     const worlds = [
       {
         cls: "world-button world-button-2 world-mode-button",
-        label: t("world_easy"),
+        label: t("world_levels"),
         action: () => this.switcher.showLevelChoiceEasy(p),
-      },
-      {
-        cls: "world-button world-button-2 world-mode-button",
-        label: t("world_difficult"),
-        action: () => this.switcher.showLevelChoiceHard(p),
-      },
-      {
-        cls: "world-button world-button-2 world-mode-button",
-        label: t("world_special"),
-        action: () => this.switcher.showLevelChoiceSpecial(p),
       },
       {
         cls: "world-button world-button-2 world-mode-button",

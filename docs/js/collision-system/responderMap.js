@@ -462,7 +462,10 @@ function dynTriResponse(a, b, eventBus) {
   }
 
   if (isPlayer(a) && isPortal(b)) {
-    if (b.isOpen) {
+    // Fire only once per portal instance (win animation follows).
+    // 每个传送门只触发一次（之后会播放胜利动画）。
+    if (b.isOpen && !b._winTriggered) {
+      b._winTriggered = true;
       eventBus && eventBus.publish(EventTypes.AUTO_RESULT, "autoResult1");
     }
     return;

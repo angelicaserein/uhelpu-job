@@ -4,6 +4,7 @@ import { t } from "../../../i18n/index.js";
 import { Assets } from "../../../AssetsManager.js";
 import { AudioManager } from "../../../AudioManager.js";
 import { EventTypes } from "../../../event-system/EventTypes.js";
+import { LevelProgress } from "../../../level-design/LevelProgress.js";
 
 export class StaticPageWinEasy extends PageBase {
   constructor(levelIndex, switcher, p, eventBus) {
@@ -14,12 +15,7 @@ export class StaticPageWinEasy extends PageBase {
 
     console.log("[WinEasy] Constructor - levelIndex:", this.levelIndex);
 
-    const levelNum = parseInt(this.levelIndex.replace(/.*level/, ""), 10);
-    const nextLevelId = this.levelIndex.replace(
-      /level\d+$/,
-      `level${levelNum + 1}`,
-    );
-    const TOTAL_LEVELS = 10;
+    const nextLevelId = LevelProgress.getNext(this.levelIndex);
 
     const btnW = 180;
     const btnH = 46;
@@ -35,7 +31,7 @@ export class StaticPageWinEasy extends PageBase {
     this._winButtons = [];
 
     // 下一关按钮（左边）
-    if (levelNum < TOTAL_LEVELS) {
+    if (nextLevelId) {
       const nextBtn = new ButtonBase(
         p,
         t("btn_next_level"),
@@ -185,8 +181,10 @@ export class StaticPageWinEasy extends PageBase {
     // sub-label
     p.fill(255, 200, 240, 200);
     p.textSize(20);
+    const orderIdx = LevelProgress.indexOf(this.levelIndex);
     const match = this.levelIndex.match(/\d+/);
-    const levelNum = match ? parseInt(match[0], 10) : "?";
+    const levelNum =
+      orderIdx >= 0 ? orderIdx + 1 : match ? parseInt(match[0], 10) : "?";
     p.text(`- Level ${levelNum} -`, p.width / 2, titleY + 52);
 
     // 显示本次通关用时
