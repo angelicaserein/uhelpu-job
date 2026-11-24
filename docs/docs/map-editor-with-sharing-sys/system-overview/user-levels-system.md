@@ -1,8 +1,10 @@
 # 用户自制关卡系统文档
 
+> 注：Firebase 上传、地图广场列表、从云端加载玩家关卡这些功能已从本仓库移除。下文中涉及它们的章节（上传阶段、列表显示、Firebase 数据结构、StaticPageUserLevelList 生命周期、AppCoordinator 用户关卡处理、上传前校验）仅作历史记录，JSON 格式、实体类型、房间实现等章节仍然有效。
+
 ## 系统概述与架构
 
-用户自制关卡系统允许玩家在编辑器中创建关卡，导出为 JSON 格式，上传到 Firebase，供其他玩家下载和游玩。
+用户自制关卡系统允许玩家在编辑器中创建关卡，并导出为 JSON 格式（原先还支持上传到 Firebase 供其他玩家下载和游玩，该部分已移除）。
 
 **完整数据流程：**
 
@@ -15,7 +17,6 @@
 - **完全客户端驱动**：所有解析、渲染、物理计算都在浏览器中进行
 - **支持多房间**：一个关卡可以包含多个房间，玩家可以左右移动切换
 - **支持复杂机制**：按钮联动、传送门、平台等机制可通过 JSON 表示
-- **Firebase REST API**：使用 Firestore REST 接口，无需 SDK
 
 ---
 
@@ -25,8 +26,6 @@
 | ----------------------------------------------------- | ------------------------------------------------------------------------------ |
 | `js/user-levels/LevelParser.js`                       | `UserLevel` 类，运行时将 JSON 解析为可运行的关卡实例                           |
 | `js/develop-mode/EditorExporter.js`                   | `EditorExporter` 类，提供 `generateJSON()` 方法将编辑器数据导出为 JSON         |
-| `js/utils/firebase-init.js`                           | Firebase 操作函数：`uploadUserLevel()`、`getUserLevelList()`、`getUserLevel()` |
-| `js/ui/pages/static-pages/StaticPageUserLevelList.js` | 用户关卡列表页面，显示所有可下载的关卡                                         |
 | `js/AppCoordinator.js`                                | 应用协调器，处理用户关卡的加载和生命周期                                       |
 | `js/level-design/LevelManager.js`                     | `loadLevelInstance()` 方法，加载预实例化的关卡对象                             |
 

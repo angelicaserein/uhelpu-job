@@ -9,11 +9,8 @@ import { StaticPageLevelChoiceDemo2 } from "../ui/pages/static-pages/StaticPageL
 import { StaticPageLevelChoiceEasy } from "../ui/pages/static-pages/StaticPageLevelChoiceEasy.js";
 import { StaticPageLevelChoiceHard } from "../ui/pages/static-pages/StaticPageLevelChoiceHard.js";
 import { StaticPageLevelChoiceSpecial } from "../ui/pages/static-pages/StaticPageLevelChoiceSpecial.js";
-import { StaticPageLeaderboard } from "../ui/pages/static-pages/StaticPageLeaderboard.js";
 import { StaticPageWorldSelect } from "../ui/pages/static-pages/StaticPageWorldSelect.js";
-import { StaticPageUserLevelList } from "../ui/pages/static-pages/StaticPageUserLevelList.js";
 import { LanguageChoice } from "../ui/pages/static-pages/LanguageChoice.js";
-import { NameInputPage } from "../ui/pages/static-pages/NameInputPage.js";
 
 export class SwitcherStaticPage extends SwitcherBase {
   constructor(mainSwitcher, p) {
@@ -53,11 +50,6 @@ export class SwitcherStaticPage extends SwitcherBase {
     this.main.switchToStatic(page, p);
   }
 
-  showNameInput(p = this.p, options = {}) {
-    const page = new NameInputPage(this, p, options);
-    this.main.switchToStatic(page, p);
-  }
-
   showWorldSelect(p = this.p) {
     const page = new StaticPageWorldSelect(this, p, this.eventBus);
     this.main.switchToStatic(page, p);
@@ -80,16 +72,6 @@ export class SwitcherStaticPage extends SwitcherBase {
 
   showLevelChoiceSpecial(p = this.p) {
     const page = new StaticPageLevelChoiceSpecial(this, p, this.eventBus);
-    this.main.switchToStatic(page, p);
-  }
-
-  showLeaderboardPage(p = this.p) {
-    const page = new StaticPageLeaderboard(this, p);
-    this.main.switchToStatic(page, p);
-  }
-
-  showUserLevelList(p = this.p) {
-    const page = new StaticPageUserLevelList(this, p, this.eventBus);
     this.main.switchToStatic(page, p);
   }
 

@@ -2,14 +2,8 @@ import { Assets } from "./js/AssetsManager.js";
 import { AppCoordinator } from "./js/AppCoordinator.js";
 import { createStartupLoadingOverlay } from "./js/loading-screen/StartupLoadingOverlay.js";
 import { installSoundPatches } from "./js/sound/SoundPatches.js";
-import { initializeFirebase } from "./js/utils/firebase-init.js";
 
 console.log("[main] App starting...");
-
-// 初始化 Firebase
-initializeFirebase().then(() => {
-  console.log("[main] Firebase ready");
-});
 
 // 纯 p5 实例模式，所有依赖都通过 p 实例传递
 new p5((p) => {

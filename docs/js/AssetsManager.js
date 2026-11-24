@@ -290,7 +290,7 @@ export const Assets = {
         "门关贴图",
       ),
       this._safeLoad(
-        p.loadImage("assets/images/bg/demo2levelbg.png"),
+        p.loadImage("assets/images/bg/panorama_loop.png"),
         "Demo2关卡背景",
       ),
       this._safeLoad(

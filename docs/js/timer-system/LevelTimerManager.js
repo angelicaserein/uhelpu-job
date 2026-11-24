@@ -151,41 +151,6 @@ export class LevelTimerManager {
           `[LevelTimerManager] Saved finalScore to window: ${elapsedTime}s`,
         );
 
-        // 自动上报成绩到Firebase（异步执行，不阻塞）
-        const supportsLeaderboard =
-          this.levelId.startsWith("easy_") || this.levelId.startsWith("hard_");
-        if (supportsLeaderboard && window.submitScore && window.playerName) {
-          console.log(
-            `[LevelTimerManager] Auto-reporting score for ${this.levelId}...`,
-          );
-          // 异步执行，不等待结果
-          window
-            .submitScore(window.playerName, elapsedTimeMs, this.levelId)
-            .catch((error) => {
-              console.error(
-                "[LevelTimerManager] Error submitting score:",
-                error,
-              );
-            });
-        } else {
-          if (!supportsLeaderboard) {
-            console.log(
-              "[LevelTimerManager] Leaderboard disabled for this difficulty, skipping score submission",
-            );
-          }
-          if (!window.submitScore) {
-            console.warn(
-              "[LevelTimerManager] window.submitScore not available",
-            );
-          }
-          if (!window.playerName) {
-            console.warn(
-              "[LevelTimerManager] window.playerName not set:",
-              window.playerName,
-            );
-          }
-        }
-
         // 触发排行榜回调
         if (this._onLevelCompleteCallback) {
           this._onLevelCompleteCallback({

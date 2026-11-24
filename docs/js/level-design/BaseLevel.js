@@ -139,7 +139,50 @@ export class BaseLevel {
     this.syncSystemsEntities();
   }
 
+  /**
+   * 绘制共享背景（横向无缝循环）。
+   * 背景图按世界坐标一张接一张地重复平铺，不再按房间各贴一遍，
+   * 所以房间交界处没有接缝，房间数量不限。
+   * 要换背景：替换 assets/images/bg/panorama_loop.png，
+   * 新图需要左右边缘能首尾相接，高度至少 768px，宽度不限。
+   *
+   * @param {number} cameraX   - 相机横向位置（单房间关卡传 0）
+   * @param {number} bgOffsetX - 视差偏移（cameraNudgeX * bgParallaxFactor）
+   */
+  drawSharedBackground(p = this.p, cameraX = 0, bgOffsetX = 0) {
+    const bg = Assets.bgImageDemo2Level;
+    if (!bg) {
+      p.background(220);
+      return;
+    }
+    const scale = Math.max(p.width / bg.width, p.height / bg.height) * 1.05;
+    const tileW = bg.width * scale;
+    const tileH = bg.height * scale;
+    const viewLeft = Math.round(cameraX + bgOffsetX);
+    const first = Math.floor(viewLeft / tileW);
+    const last = Math.floor((viewLeft + p.width) / tileW);
+
+    p.push();
+    p.translate(-viewLeft, 0);
+    p.scale(1, -1);
+    for (let k = first; k <= last; k++) {
+      const x = Math.round(k * tileW);
+      // +1px 重叠，避免相邻图块之间出现亚像素缝隙
+      const w = Math.round((k + 1) * tileW) - x + 1;
+      p.image(bg, x, -p.height, w, tileH);
+    }
+    p.pop();
+  }
+
   clearCanvas(p = this.p, cameraNudgeX = 0, bgParallaxFactor = 1) {
+    if (this.bgAssetKey === "bgImageDemo2Level") {
+      this.drawSharedBackground(
+        p,
+        0,
+        Math.round(cameraNudgeX * bgParallaxFactor),
+      );
+      return;
+    }
     const bg = this.bgAssetKey ? Assets[this.bgAssetKey] : null;
     if (bg) {
       const bgOffsetX = Math.round(cameraNudgeX * bgParallaxFactor);

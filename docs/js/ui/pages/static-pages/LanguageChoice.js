@@ -39,17 +39,13 @@ export class LanguageChoice extends PageBase {
     const p = this.p;
     const copy = this._getPageCopy();
 
-    // 检查 localStorage 中是否有保存的名字和语言
-    const savedName = localStorage.getItem("playerName");
+    // 检查 localStorage 中是否有保存的语言
     const savedLang = localStorage.getItem("kinoko_lang");
 
-    if (savedName && savedLang) {
-      // 两者都有，直接进入游戏，跳过语言和名字选择
-      console.log(
-        "[LanguageChoice] Found saved name and language, skipping to game",
-      );
+    if (savedLang) {
+      // 已保存语言，直接进入游戏，跳过语言选择
+      console.log("[LanguageChoice] Found saved language, skipping to game");
       i18n.setLang(savedLang);
-      window.playerName = savedName;
       this.switcher.showWorldSelect(p);
       return;
     }
@@ -61,7 +57,7 @@ export class LanguageChoice extends PageBase {
     enPanel.addClass("language-panel lang-panel-left");
     enPanel.mouseClicked(() => {
       i18n.setLang("en");
-      this.switcher.showNameInput(p);
+      this.switcher.showWorldSelect(p);
     });
     this.addElement(enPanel);
 
@@ -70,7 +66,7 @@ export class LanguageChoice extends PageBase {
     zhPanel.addClass("language-panel lang-panel-right");
     zhPanel.mouseClicked(() => {
       i18n.setLang("zh");
-      this.switcher.showNameInput(p);
+      this.switcher.showWorldSelect(p);
     });
     this.addElement(zhPanel);
 
@@ -81,14 +77,14 @@ export class LanguageChoice extends PageBase {
           btn: enPanel,
           callback: () => {
             i18n.setLang("en");
-            this.switcher.showNameInput(p);
+            this.switcher.showWorldSelect(p);
           },
         },
         {
           btn: zhPanel,
           callback: () => {
             i18n.setLang("zh");
-            this.switcher.showNameInput(p);
+            this.switcher.showWorldSelect(p);
           },
         },
       ],

@@ -588,32 +588,7 @@ export class UserLevel extends BaseLevel {
   clearCanvas(p = this.p, cameraNudgeX = 0, bgParallaxFactor = 1) {
     const cameraX =
       this.rooms && this.rooms.length > 1 ? this._getCameraX(p) : 0;
-    const bgOffsetX = cameraNudgeX * bgParallaxFactor;
-    const bg = Assets.bgImageDemo2Level;
-
-    if (bg) {
-      p.push();
-      p.translate(-cameraX - bgOffsetX, 0);
-      p.scale(1, -1);
-
-      // Determine number of rooms to draw
-      const roomCount = this.rooms ? this.rooms.length : 1;
-      for (let i = 0; i < roomCount; i++) {
-        const scaleX = p.width / bg.width;
-        const scaleY = p.height / bg.height;
-        const scale = Math.max(scaleX, scaleY) * 1.05;
-        p.image(
-          bg,
-          i * p.width,
-          -p.height,
-          bg.width * scale,
-          bg.height * scale,
-        );
-      }
-      p.pop();
-    } else {
-      p.background(220);
-    }
+    this.drawSharedBackground(p, cameraX, cameraNudgeX * bgParallaxFactor);
   }
 
   /**

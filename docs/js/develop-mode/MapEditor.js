@@ -97,9 +97,6 @@ export class MapEditor {
     // Inject save callback
     this._ui.onSave = () => this._handleSave();
 
-    // Inject upload callback
-    this._ui.onUpload = () => this._handleUpload();
-
     // Bind keyboard/mouse events
     this._boundKeyPressed = (e) => this._onKeyPressed(e);
     this._boundMousePressed = () => this._onMousePressed();
@@ -514,68 +511,6 @@ export class MapEditor {
     );
     this._ui.showToast(t("editor_export_success_copied"));
     console.log("[MapEditor] Exported code:\n" + code);
-  }
-
-  /**
-   * Handle user level upload
-   */
-  async _handleUpload() {
-    // 1. Prompt for level title
-    const title = window.prompt(
-      t("editor_upload_prompt_level_title"),
-      t("editor_upload_prompt_level_title_default"),
-    );
-    if (title === null || title.trim() === "") {
-      return;
-    }
-
-    // 2. Get current player name from localStorage
-    let authorName = "Anonymous";
-    try {
-      const acctRaw = localStorage.getItem("playerAccount");
-      if (acctRaw) {
-        const account = JSON.parse(acctRaw);
-        authorName = account.username || "Anonymous";
-      } else {
-        authorName = localStorage.getItem("playerName") || "Anonymous";
-      }
-    } catch (e) {
-      /* ignore */
-    }
-
-    // 3. Collect level data
-    const records = this._entityMgr.getAll();
-    const levelJSON = EditorExporter.generateJSON(
-      records,
-      this._roomCount,
-      this._p.width,
-      this._p.height,
-      {
-        x: this._spawnX,
-        y: this._spawnY,
-        w: this._spawnPlayerW,
-        h: this._spawnPlayerH,
-      },
-      { title: title.trim(), authorName },
-    );
-
-    // 4. Call upload function
-    try {
-      const success = await window.uploadUserLevel(
-        levelJSON,
-        authorName,
-        title.trim(),
-      );
-
-      if (success) {
-        this._ui.showToast(t("editor_upload_success"));
-      } else {
-        this._ui.showToast(t("editor_upload_failed_network"));
-      }
-    } catch (error) {
-      console.error("[MapEditor] Upload error:", error);
-      this._ui.showToast(t("editor_upload_failed_network"));
-    }
   }
 
   _toggleSelectedBtnPlatformMode(platformIdx) {

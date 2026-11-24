@@ -7,7 +7,6 @@ import { SwitcherMain } from "./switchers/SwitcherMain.js";
 import { EventBus } from "./event-system/EventBus.js";
 import { EventTypes } from "./event-system/EventTypes.js";
 import { LevelManager } from "./level-design/LevelManager.js";
-import { UserLevel } from "./user-levels/LevelParser.js";
 import { StaticPageResultDemo1 } from "./ui/pages/static-pages/StaticPageResultDemo1.js";
 import { StaticPageResultDemo2 } from "./ui/pages/static-pages/StaticPageResultDemo2.js";
 import { StaticPageWinDemo1 } from "./ui/pages/static-pages/StaticPageWinDemo1.js";
@@ -23,8 +22,7 @@ export class AppCoordinator {
     this.levelManager = new LevelManager(p, this.eventBus);
     this._pendingLevelReload = null;
     this._pendingTimerSnapshot = null;
-    this._currentLevelType = null; // "normal" or "user" | 关卡类型（"普通"或"用户自制"）
-    this._currentUserLevelId = null;
+    this._currentLevelType = null;
   }
 
   init() {
@@ -51,61 +49,6 @@ export class AppCoordinator {
         );
         this.switcher.switchToGame(gamePage, this.p);
         this._currentLevelType = "normal";
-        this._currentUserLevelId = null;
-        return;
-      }
-
-      // Check if this is a user-created level
-      // 检查是否为用户自制关卡
-      if (
-        loadRequest?.levelType === "user" ||
-        this._currentLevelType === "user"
-      ) {
-        const levelId = loadRequest?.levelId || this._currentUserLevelId;
-        const startCheckpoint = loadRequest?.startCheckpoint || null;
-        const startTeleportPoints = loadRequest?.startTeleportPoints || null;
-        window
-          .getUserLevel(levelId)
-          .then((levelJSON) => {
-            try {
-              const levelData = JSON.parse(levelJSON);
-              const userLevel = new UserLevel(this.p, this.eventBus, levelData);
-
-              this._pendingTimerSnapshot = null;
-              this.switcher.clearOverlay(this.p);
-              if (this.levelManager.level) {
-                this.levelManager.setPaused(false);
-                this.levelManager.unloadLevel(this.p, this.eventBus);
-                this.switcher.gameSwitcher.runtimeLevelManager = null;
-              }
-
-              this.levelManager.loadLevelInstance(userLevel, this.p, {
-                startCheckpoint,
-                startTeleportPoints,
-              });
-              this.switcher.gameSwitcher.runtimeLevelManager =
-                this.levelManager;
-
-              this._currentLevelType = "user";
-              this._currentUserLevelId = levelId;
-
-              const gamePage = this.switcher.gameSwitcher.createLevelPage(
-                "user",
-                this.p,
-              );
-              this.switcher.switchToGame(gamePage, this.p);
-            } catch (error) {
-              console.error(
-                "[AppCoordinator] Failed to parse user level:",
-                error,
-              );
-              alert("关卡数据错误，加载失败");
-            }
-          })
-          .catch((error) => {
-            console.error("[AppCoordinator] Failed to load user level:", error);
-            alert("关卡加载失败，请检查网络");
-          });
         return;
       }
 
@@ -151,7 +94,6 @@ export class AppCoordinator {
       this.switcher.gameSwitcher.runtimeLevelManager = this.levelManager;
 
       this._currentLevelType = "normal";
-      this._currentUserLevelId = null;
 
       const gamePage = this.switcher.gameSwitcher.createLevelPage(
         levelIndex,
@@ -174,14 +116,12 @@ export class AppCoordinator {
     });
 
     this.eventBus.subscribe(EventTypes.RETURN_LEVEL_CHOICE, () => {
-      // User-level and empty-editor flows should return to Map Plaza list.
-      // 用户关卡与空白编辑器流程应返回地图广场列表。
+      // Empty-editor flow returns to the world select page.
+      // 空白编辑器流程返回选世界页。
       const currentLevelIndex = this.levelManager.currentLevelIndex;
-      const shouldBackToUserLevelList =
-        this._currentLevelType === "user" ||
-        currentLevelIndex === "empty_editor";
+      const shouldBackToWorldSelect = currentLevelIndex === "empty_editor";
 
-      if (shouldBackToUserLevelList) {
+      if (shouldBackToWorldSelect) {
         this.switcher.clearOverlay(this.p);
         if (this.levelManager.level) {
           this.levelManager.setPaused(false);
@@ -189,8 +129,7 @@ export class AppCoordinator {
           this.switcher.gameSwitcher.runtimeLevelManager = null;
         }
         this._currentLevelType = null;
-        this._currentUserLevelId = null;
-        this.switcher.staticSwitcher.showUserLevelList(this.p);
+        this.switcher.staticSwitcher.showWorldSelect(this.p);
         return;
       }
 
@@ -250,21 +189,6 @@ export class AppCoordinator {
       // 失败：暂停游戏并在游戏上方显示覆盖层。
       // demo1 uses its own result page; all other modes share Demo2's result page.
       // demo1 使用专属结算页，其他所有模式共用 Demo2 的结算页。
-
-      // Handle user-created levels death reload
-      // 处理用户自制关卡的死亡重载
-      if (this._currentLevelType === "user") {
-        this.levelManager.setPaused(true);
-        const resultPage = new StaticPageResultDemo2(
-          result,
-          "user_level",
-          this.switcher,
-          this.p,
-          this.eventBus,
-        );
-        this.switcher.setOverlay(resultPage, this.p);
-        return;
-      }
 
       this.levelManager.setPaused(true);
       const ResultPage =

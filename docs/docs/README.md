@@ -32,17 +32,10 @@
   - RECORD_SYSTEM_DEMO2_TECHNICAL.md
   - RECORD_SYSTEM_FEATURE_DESCRIPTION.md
 
-- leaderboard-with-account-sys-排行榜with account sys
-  - timer-计时部分/TIMER_SYSTEM_TECHNICAL.md
-  - guest-login-游客登录部分/GUEST_LOGIN_SYSTEM_TECHNICAL.md
-  - account-账号部分/ACCOUNT_SYSTEM_TECHNICAL.md
-  - leaderboard-firebase-排行榜涉及到后端firebase的部分/（3份 Firebase/排行榜文档）
-
 - map-editor-with-sharing-sys-地图编辑器与共享系统
   - README_INDEX.md
   - map-editor-core-地图编辑器本身/MAP_EDITOR_CORE_TECHNICAL.md
   - save-feature-how-to-use-保存功能怎么用/SAVE_FEATURE_USAGE.md
-  - player-map-sharing-backend-玩家共享地图后端实现/MAP_SHARING_BACKEND_TECHNICAL.md
   - system-overview-系统总览/user-levels-system.md
 
 ## 其他分类

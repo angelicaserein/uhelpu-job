@@ -1,22 +1,11 @@
 import { soundManager } from "./sound/SoundManager.js";
 
+// 全局只有一首背景音乐：所有页面和关卡都播放 menu。
+// 任何 playBGM(key) 都会被归一到这首，因此切换页面时音乐不会中断或重播。
 const TRACKS = {
   menu: "assets/audio/bgm/menu.mp3",
-  setting: "assets/audio/bgm/setting.mp3",
-  level1: "assets/audio/bgm/level/level1.mp3",
-  level2: "assets/audio/bgm/level/level2.mp3",
-  level3: "assets/audio/bgm/level/level3.mp3",
-  level4: "assets/audio/bgm/level/level4.mp3",
-  level5: "assets/audio/bgm/level/level5.mp3",
-  level6: "assets/audio/bgm/level/level6.mp3",
-  level7: "assets/audio/bgm/level/level7.mp3",
-  level8: "assets/audio/bgm/level/level8.mp3",
-  level9: "assets/audio/bgm/level/level9.mp3",
-  level10: "assets/audio/bgm/level/level10.mp3",
-  levelChoice: "assets/audio/bgm/levelchoice.mp3",
-  openingStory: "assets/audio/bgm/openingstory.mp3",
-  achieves: "assets/audio/bgm/achieve.mp3",
 };
+const SINGLE_BGM_KEY = "menu";
 
 const SFX_TRACKS = {
   click: "assets/audio/sxf/click.mp3",
@@ -134,7 +123,8 @@ class AudioManagerImpl {
     }, FADE_INTERVAL);
   }
 
-  playBGM(trackKey) {
+  playBGM(_trackKey) {
+    const trackKey = SINGLE_BGM_KEY;
     const next = this._getOrCreateBgm(trackKey);
     if (!next) {
       console.warn(`[AudioManager] Unknown BGM track: ${trackKey}`);

@@ -209,29 +209,11 @@ export class Level10 extends BaseLevel {
   }
 
   clearCanvas(p = this.p, cameraNudgeX = 0, bgParallaxFactor = 1) {
-    const cameraX = this._getCameraX(p);
-    const bgOffsetX = cameraNudgeX * bgParallaxFactor;
-    const bg = this.bgAssetKey ? Assets[this.bgAssetKey] : null;
-    if (bg) {
-      p.push();
-      p.translate(-cameraX - bgOffsetX, 0);
-      p.scale(1, -1);
-      for (let i = 0; i < this.rooms.length; i++) {
-        const scaleX = p.width / bg.width;
-        const scaleY = p.height / bg.height;
-        const scale = Math.max(scaleX, scaleY) * 1.05;
-        p.image(
-          bg,
-          i * p.width,
-          -p.height,
-          bg.width * scale,
-          bg.height * scale,
-        );
-      }
-      p.pop();
-    } else {
-      p.background(220);
-    }
+    this.drawSharedBackground(
+      p,
+      this._getCameraX(p),
+      cameraNudgeX * bgParallaxFactor,
+    );
   }
 
   updatePhysics() {
