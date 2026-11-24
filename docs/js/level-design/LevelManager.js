@@ -59,7 +59,9 @@ export class LevelManager {
     if (this.winAnim) return;
     this.setPaused(true);
 
-    const portal = (this.level?.entities || []).find(
+    // entities is iterable but not necessarily an Array
+    // entities 可迭代，但不一定是数组
+    const portal = Array.from(this.level?.entities || []).find(
       (e) => e.type === "portal",
     );
     const player = this.level?.getPlayer?.();
@@ -134,7 +136,9 @@ export class LevelManager {
     // Phase 2 (400–1500ms): white iris expands from the portal
     const irisT = clamp01((elapsed - 400) / 1100);
     if (irisT > 0) {
-      p.fill(255, 255, 255, 255);
+      // Soft, semi-transparent pinkish wash instead of a pure-white flash.
+      // 柔和的半透明粉色，而不是纯白闪屏，避免刺眼。
+      p.fill(255, 225, 245, 120);
       p.circle(cx, cy, easeOut(irisT) * maxR * 2);
     }
 
