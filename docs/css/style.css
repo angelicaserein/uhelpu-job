@@ -2217,20 +2217,19 @@ body.game-paused .hint-notebook-button.scene-hint-notebook {
 
 .language-panel:hover .lang-card,
 .language-panel.kb-focused .lang-card {
-  transform: translateY(-6px);
-  border-color: #ffd98a;
-  background: rgba(62, 30, 82, 0.88);
+  border-color: #e6cbff;
+  background: rgba(74, 40, 98, 0.85);
   box-shadow:
-    8px 12px 0 rgba(10, 4, 18, 0.55),
-    0 0 26px rgba(255, 217, 138, 0.28);
+    inset 0 0 0 3px rgba(230, 203, 255, 0.18),
+    6px 6px 0 rgba(10, 4, 18, 0.55);
 }
 .language-panel:hover .lang-card-glyph,
 .language-panel.kb-focused .lang-card-glyph {
-  color: #ffd98a;
+  color: #ffffff;
 }
 .language-panel:hover .lang-card-hint,
 .language-panel.kb-focused .lang-card-hint {
-  color: #ffd98a;
+  color: #e6cbff;
 }
 
 @keyframes lang-hint-breathe {
@@ -2253,6 +2252,7 @@ body.game-paused .hint-notebook-button.scene-hint-notebook {
   font-family: "HYPixel11", "PixelFont", sans-serif;
   font-size: 1.1vw;
   letter-spacing: 0.08em;
+  line-height: 1.8;
   color: #cfa8ea;
   animation: lang-hint-breathe 2.8s ease-in-out infinite;
 }

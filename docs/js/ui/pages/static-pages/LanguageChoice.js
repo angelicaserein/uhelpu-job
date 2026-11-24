@@ -19,15 +19,13 @@ export class LanguageChoice extends PageBase {
   }
 
   _getPageCopy() {
-    const isChinese = i18n.getLang() === "zh";
     return {
       enLabel: "ENGLISH",
       zhLabel: "中 文",
       enSelectHint: "Click to select",
       zhSelectHint: "点击选择",
-      footerHint: isChinese
-        ? "你可以随时在设置里调整语言。"
-        : "You can change the language anytime in Settings.",
+      footerHint:
+        "You can change the language anytime in Settings.<br>你可以随时在设置里调整语言。",
       title: "Select Language",
       titleZh: "请选择语言",
     };
