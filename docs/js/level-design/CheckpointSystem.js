@@ -35,10 +35,7 @@ export class CheckpointSystem {
     if (!level) return false;
 
     const levelIndex = level.__levelIndex;
-    if (
-      typeof levelIndex === "string" &&
-      (levelIndex.startsWith("demo2_") || levelIndex.startsWith("easy_"))
-    ) {
+    if (typeof levelIndex === "string" && levelIndex.startsWith("easy_")) {
       return false;
     }
 

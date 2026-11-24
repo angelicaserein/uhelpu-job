@@ -16,28 +16,6 @@
 
 // ── Level classes ──────────────────────────────────────────────────────────
 // 关卡类导入 ────────────────────────────────────────────────────────────────
-import { Level1 } from "./level-design/demo1/Level1.js";
-import { Level2 } from "./level-design/demo1/Level2.js";
-import { Level3 } from "./level-design/demo1/Level3.js";
-import { Level4 } from "./level-design/demo1/Level4.js";
-import { Level5 } from "./level-design/demo1/Level5.js";
-import { Level6 } from "./level-design/demo1/Level6.js";
-import { Level7 } from "./level-design/demo1/Level7.js";
-import { Level8 } from "./level-design/demo1/Level8.js";
-import { Level9 } from "./level-design/demo1/Level9.js";
-import { Level10 } from "./level-design/demo1/Level10.js";
-
-import { Level1 as Demo2Level1 } from "./level-design/demo2/Level1.js";
-import { Level2 as Demo2Level2 } from "./level-design/demo2/Level2.js";
-import { Level3 as Demo2Level3 } from "./level-design/demo2/Level3.js";
-import { Level4 as Demo2Level4 } from "./level-design/demo2/Level4.js";
-import { Level5 as Demo2Level5 } from "./level-design/demo2/Level5.js";
-import { Level6 as Demo2Level6 } from "./level-design/demo2/Level6.js";
-import { Level7 as Demo2Level7 } from "./level-design/demo2/Level7.js";
-import { Level8 as Demo2Level8 } from "./level-design/demo2/Level8.js";
-import { Level9 as Demo2Level9 } from "./level-design/demo2/Level9.js";
-import { Level10 as Demo2Level10 } from "./level-design/demo2/Level10.js";
-
 import { Level1 as EasyLevel1 } from "./level-design/easy/Level1.js";
 import { Level2 as EasyLevel2 } from "./level-design/easy/Level2.js";
 import { Level3 as EasyLevel3 } from "./level-design/easy/Level3.js";
@@ -77,14 +55,8 @@ import { LevelEmpty10Room } from "./user-levels/LevelEmpty10Room.js";
 
 // ── GamePage classes ───────────────────────────────────────────────────────
 // 游戏页面类导入 ───────────────────────────────────────────────────────────
-// demo1: Level1 and Level3 have real subclasses; the rest use the base class directly.
-// demo1：Level1 和 Level3 有专属子类，其余关卡直接使用基类。
-import { GamePageLevel1 as Demo1GamePageLevel1 } from "./ui/pages/game-pages/demo1/GamePageLevel1.js";
-import { GamePageLevel3 as Demo1GamePageLevel3 } from "./ui/pages/game-pages/demo1/GamePageLevel3.js";
-import { GamePageBaseDemo1 } from "./ui/pages/game-pages/GamePageBaseDemo1.js";
-
-// demo2: all levels use the base class directly (each subclass only defaults the levelIndex arg).
-// demo2：所有关卡直接使用基类（每个子类仅设置 levelIndex 默认参数）。
+// All difficulty modes use this shared base class directly.
+// 所有难度模式直接使用这个共用基类。
 import { GamePageBaseDemo2 } from "./ui/pages/game-pages/GamePageBaseDemo2.js";
 
 // easy: Level1 has a real subclass (Tutorial integration); the rest use a factory below.
@@ -111,13 +83,9 @@ function makePageFactory(
 ) {
   return class extends BaseClass {
     constructor(switcher, p) {
-      if (BaseClass === GamePageBaseDemo1) {
-        super(switcher, p, levelNum, hintKey);
-      } else {
-        super(switcher, p, levelNum, hintKey, levelIndex, {
-          showButtons: false,
-        });
-      }
+      super(switcher, p, levelNum, hintKey, levelIndex, {
+        showButtons: false,
+      });
       if (applyTimer && this._gameTimer) {
         this._gameTimer.applyEasyStyle(p.canvas);
       }
@@ -130,136 +98,6 @@ function makePageFactory(
 
 /** @type {Object.<string, {LevelClass: Function, PageClass: Function}>} */
 export const LEVEL_REGISTRY = {
-  // demo1 — original campaign levels
-  // demo1 — 原始主线关卡
-  level1: { LevelClass: Level1, PageClass: Demo1GamePageLevel1 },
-  level2: {
-    LevelClass: Level2,
-    PageClass: makePageFactory(GamePageBaseDemo1, 2, "hint_level2"),
-  },
-  level3: { LevelClass: Level3, PageClass: Demo1GamePageLevel3 },
-  level4: {
-    LevelClass: Level4,
-    PageClass: makePageFactory(GamePageBaseDemo1, 4, "hint_level4"),
-  },
-  level5: {
-    LevelClass: Level5,
-    PageClass: makePageFactory(GamePageBaseDemo1, 5, "hint_level5"),
-  },
-  level6: {
-    LevelClass: Level6,
-    PageClass: makePageFactory(GamePageBaseDemo1, 6, "hint_level6"),
-  },
-  level7: {
-    LevelClass: Level7,
-    PageClass: makePageFactory(GamePageBaseDemo1, 7, "hint_level7"),
-  },
-  level8: {
-    LevelClass: Level8,
-    PageClass: makePageFactory(GamePageBaseDemo1, 8, "hint_level8"),
-  },
-  level9: {
-    LevelClass: Level9,
-    PageClass: makePageFactory(GamePageBaseDemo1, 9, "hint_level9"),
-  },
-  level10: {
-    LevelClass: Level10,
-    PageClass: makePageFactory(GamePageBaseDemo1, 10, "hint_level10"),
-  },
-
-  // demo2 — second campaign
-  // demo2 — 第二套主线关卡
-  demo2_level1: {
-    LevelClass: Demo2Level1,
-    PageClass: makePageFactory(
-      GamePageBaseDemo2,
-      1,
-      "d2_hint_level1",
-      "demo2_level1",
-    ),
-  },
-  demo2_level2: {
-    LevelClass: Demo2Level2,
-    PageClass: makePageFactory(
-      GamePageBaseDemo2,
-      2,
-      "d2_hint_level2",
-      "demo2_level2",
-    ),
-  },
-  demo2_level3: {
-    LevelClass: Demo2Level3,
-    PageClass: makePageFactory(
-      GamePageBaseDemo2,
-      3,
-      "hint_level3",
-      "demo2_level3",
-    ),
-  },
-  demo2_level4: {
-    LevelClass: Demo2Level4,
-    PageClass: makePageFactory(
-      GamePageBaseDemo2,
-      4,
-      "hint_level4",
-      "demo2_level4",
-    ),
-  },
-  demo2_level5: {
-    LevelClass: Demo2Level5,
-    PageClass: makePageFactory(
-      GamePageBaseDemo2,
-      5,
-      "hint_level5",
-      "demo2_level5",
-    ),
-  },
-  demo2_level6: {
-    LevelClass: Demo2Level6,
-    PageClass: makePageFactory(
-      GamePageBaseDemo2,
-      6,
-      "hint_level6",
-      "demo2_level6",
-    ),
-  },
-  demo2_level7: {
-    LevelClass: Demo2Level7,
-    PageClass: makePageFactory(
-      GamePageBaseDemo2,
-      7,
-      "hint_level7",
-      "demo2_level7",
-    ),
-  },
-  demo2_level8: {
-    LevelClass: Demo2Level8,
-    PageClass: makePageFactory(
-      GamePageBaseDemo2,
-      8,
-      "hint_level8",
-      "demo2_level8",
-    ),
-  },
-  demo2_level9: {
-    LevelClass: Demo2Level9,
-    PageClass: makePageFactory(
-      GamePageBaseDemo2,
-      9,
-      "hint_level9",
-      "demo2_level9",
-    ),
-  },
-  demo2_level10: {
-    LevelClass: Demo2Level10,
-    PageClass: makePageFactory(
-      GamePageBaseDemo2,
-      10,
-      "d2_hint_level10",
-      "demo2_level10",
-    ),
-  },
-
   // easy — easy difficulty mode
   // easy — 简单难度模式
   easy_level1: { LevelClass: EasyLevel1, PageClass: EasyGamePageLevel1 },

@@ -3,9 +3,6 @@ import { StaticPageMenu } from "../ui/pages/static-pages/StaticPageMenu.js";
 import { StaticPageSetting } from "../ui/pages/static-pages/StaticPageSetting.js";
 import { StaticPageAchieves } from "../ui/pages/static-pages/StaticPageAchieves.js";
 import { StaticPageOpeningStory } from "../ui/pages/static-pages/StaticPageOpeningStory.js";
-import { StaticPageOpeningStoryDemo1 } from "../ui/pages/static-pages/StaticPageOpeningStoryDemo1.js";
-import { StaticPageLevelChoice } from "../ui/pages/static-pages/StaticPageLevelChoice.js";
-import { StaticPageLevelChoiceDemo2 } from "../ui/pages/static-pages/StaticPageLevelChoiceDemo2.js";
 import { StaticPageLevelChoiceEasy } from "../ui/pages/static-pages/StaticPageLevelChoiceEasy.js";
 import { StaticPageLevelChoiceHard } from "../ui/pages/static-pages/StaticPageLevelChoiceHard.js";
 import { StaticPageLevelChoiceSpecial } from "../ui/pages/static-pages/StaticPageLevelChoiceSpecial.js";
@@ -40,11 +37,6 @@ export class SwitcherStaticPage extends SwitcherBase {
     this.main.switchToStatic(page, p);
   }
 
-  showOpeningSceneDemo1(p = this.p) {
-    const page = new StaticPageOpeningStoryDemo1(this, p);
-    this.main.switchToStatic(page, p);
-  }
-
   showLanguageChoice(p = this.p) {
     const page = new LanguageChoice(this, p);
     this.main.switchToStatic(page, p);
@@ -52,11 +44,6 @@ export class SwitcherStaticPage extends SwitcherBase {
 
   showWorldSelect(p = this.p) {
     const page = new StaticPageWorldSelect(this, p, this.eventBus);
-    this.main.switchToStatic(page, p);
-  }
-
-  showLevelChoice(p = this.p) {
-    const page = new StaticPageLevelChoice(this, p, this.eventBus);
     this.main.switchToStatic(page, p);
   }
 
@@ -72,11 +59,6 @@ export class SwitcherStaticPage extends SwitcherBase {
 
   showLevelChoiceSpecial(p = this.p) {
     const page = new StaticPageLevelChoiceSpecial(this, p, this.eventBus);
-    this.main.switchToStatic(page, p);
-  }
-
-  showLevelChoiceDemo2(p = this.p) {
-    const page = new StaticPageLevelChoiceDemo2(this, p, this.eventBus);
     this.main.switchToStatic(page, p);
   }
 }

@@ -29,30 +29,6 @@ export const TIMER_CONFIG = {
   hard_level8: { enabled: true },
   hard_level9: { enabled: true },
   hard_level10: { enabled: true },
-
-  // ── Demo1 difficulty (Timer disabled) | Demo1 难度（禁用计时） ────────────────────────────────────
-  level1: { enabled: false },
-  level2: { enabled: false },
-  level3: { enabled: false },
-  level4: { enabled: false },
-  level5: { enabled: false },
-  level6: { enabled: false },
-  level7: { enabled: false },
-  level8: { enabled: false },
-  level9: { enabled: false },
-  level10: { enabled: false },
-
-  // ── Demo2 difficulty (Timer disabled) | Demo2 难度（禁用计时） ────────────────────────────────────
-  demo2_level1: { enabled: false },
-  demo2_level2: { enabled: false },
-  demo2_level3: { enabled: false },
-  demo2_level4: { enabled: false },
-  demo2_level5: { enabled: false },
-  demo2_level6: { enabled: false },
-  demo2_level7: { enabled: false },
-  demo2_level8: { enabled: false },
-  demo2_level9: { enabled: false },
-  demo2_level10: { enabled: false },
 };
 
 /**

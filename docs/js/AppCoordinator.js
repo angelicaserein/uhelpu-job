@@ -7,10 +7,7 @@ import { SwitcherMain } from "./switchers/SwitcherMain.js";
 import { EventBus } from "./event-system/EventBus.js";
 import { EventTypes } from "./event-system/EventTypes.js";
 import { LevelManager } from "./level-design/LevelManager.js";
-import { StaticPageResultDemo1 } from "./ui/pages/static-pages/StaticPageResultDemo1.js";
 import { StaticPageResultDemo2 } from "./ui/pages/static-pages/StaticPageResultDemo2.js";
-import { StaticPageWinDemo1 } from "./ui/pages/static-pages/StaticPageWinDemo1.js";
-import { StaticPageWinDemo2 } from "./ui/pages/static-pages/StaticPageWinDemo2.js";
 import { StaticPageWinEasy } from "./ui/pages/static-pages/StaticPageWinEasy.js";
 import { AudioManager } from "./AudioManager.js";
 
@@ -143,12 +140,10 @@ export class AppCoordinator {
       this.switcher.gameSwitcher.runtimeLevelManager = null;
 
       const choiceScreens = {
-        demo2: () => this.switcher.staticSwitcher.showLevelChoiceDemo2(this.p),
         easy: () => this.switcher.staticSwitcher.showLevelChoiceEasy(this.p),
         hard: () => this.switcher.staticSwitcher.showLevelChoiceHard(this.p),
         special: () =>
           this.switcher.staticSwitcher.showLevelChoiceSpecial(this.p),
-        demo1: () => this.switcher.staticSwitcher.showLevelChoice(this.p),
       };
       (
         choiceScreens[mode] ??
@@ -168,13 +163,11 @@ export class AppCoordinator {
         // Map difficulty mode to its win-screen class.
         // 将难度模式映射到对应的胜利界面类。
         const winPageMap = {
-          demo1: StaticPageWinDemo1,
-          demo2: StaticPageWinDemo2,
           easy: StaticPageWinEasy,
           hard: StaticPageWinEasy,
           special: StaticPageWinEasy,
         };
-        const WinPage = winPageMap[mode] ?? StaticPageWinDemo1;
+        const WinPage = winPageMap[mode] ?? StaticPageWinEasy;
         const winPage = new WinPage(
           levelIndex,
           this.switcher,
@@ -187,13 +180,9 @@ export class AppCoordinator {
 
       // Lose: pause game and show overlay on top of the game.
       // 失败：暂停游戏并在游戏上方显示覆盖层。
-      // demo1 uses its own result page; all other modes share Demo2's result page.
-      // demo1 使用专属结算页，其他所有模式共用 Demo2 的结算页。
-
+      // 所有模式共用同一个失败结算页。
       this.levelManager.setPaused(true);
-      const ResultPage =
-        mode === "demo1" ? StaticPageResultDemo1 : StaticPageResultDemo2;
-      const resultPage = new ResultPage(
+      const resultPage = new StaticPageResultDemo2(
         result,
         levelIndex,
         this.switcher,
@@ -223,15 +212,14 @@ export class AppCoordinator {
    * Returns the difficulty mode for a levelIndex string.
    * 根据关卡索引字符串返回对应的难度模式。
    * @param {string} levelIndex
-   * @returns {"demo1"|"demo2"|"easy"|"hard"|"special"|"unknown"}
+   * @returns {"easy"|"hard"|"special"|"unknown"}
    */
   _getLevelMode(levelIndex) {
     if (typeof levelIndex !== "string") return "unknown";
-    if (levelIndex.startsWith("demo2_")) return "demo2";
     if (levelIndex.startsWith("easy_")) return "easy";
     if (levelIndex.startsWith("hard_")) return "hard";
     if (levelIndex.startsWith("special_")) return "special";
-    return "demo1";
+    return "unknown";
   }
 
   _normalizeLoadLevelRequest(loadRequest) {

@@ -2,12 +2,12 @@ import { PageBase } from "../PageBase.js";
 import { Assets } from "../../../AssetsManager.js";
 import { i18n } from "../../../i18n/index.js";
 
-function makePanel(text, hint) {
+function makePanel(glyph, name, hint) {
   return (
-    `<div class="lang-frame-inner">` +
-    `<div class="lang-fog"></div>` +
-    `<div class="lang-panel-text">${text}</div>` +
-    `<div class="lang-panel-hint">${hint}</div>` +
+    `<div class="lang-card">` +
+    `<div class="lang-card-glyph">${glyph}</div>` +
+    `<div class="lang-card-name">${name}</div>` +
+    `<div class="lang-card-hint">${hint}</div>` +
     `</div>`
   );
 }
@@ -53,7 +53,7 @@ export class LanguageChoice extends PageBase {
     // 没有保存数据，显示语言选择
 
     // 左侧：英语
-    const enPanel = p.createDiv(makePanel(copy.enLabel, copy.enSelectHint));
+    const enPanel = p.createDiv(makePanel("Aa", "English", copy.enSelectHint));
     enPanel.addClass("language-panel lang-panel-left");
     enPanel.mouseClicked(() => {
       i18n.setLang("en");
@@ -62,7 +62,7 @@ export class LanguageChoice extends PageBase {
     this.addElement(enPanel);
 
     // 右侧：中文
-    const zhPanel = p.createDiv(makePanel(copy.zhLabel, copy.zhSelectHint));
+    const zhPanel = p.createDiv(makePanel("文", "中文", copy.zhSelectHint));
     zhPanel.addClass("language-panel lang-panel-right");
     zhPanel.mouseClicked(() => {
       i18n.setLang("zh");
@@ -94,11 +94,17 @@ export class LanguageChoice extends PageBase {
       },
     );
 
-    // 底部呼吸灯提示条
-    const hint = p.createDiv(
-      `<div class="lang-hint-text">${copy.footerHint}</div>`,
+    // 标题
+    const title = p.createDiv(
+      `<div class="lang-title-en">${copy.title}</div>` +
+        `<div class="lang-title-zh">${copy.titleZh}</div>`,
     );
-    hint.addClass("lang-hint-bar");
+    title.addClass("lang-title");
+    this.addElement(title);
+
+    // 底部小提示
+    const hint = p.createDiv(copy.footerHint);
+    hint.addClass("lang-footer");
     this.addElement(hint);
   }
 
@@ -109,42 +115,12 @@ export class LanguageChoice extends PageBase {
     } else {
       p.background(20, 10, 40);
     }
-    this._drawTitleBanner(p);
-  }
-
-  _drawTitleBanner(p) {
-    const centerY = p.height * 0.13;
-    const bandH = Math.max(72, p.height * 0.115);
-    const coreBandW = p.width * 0.52;
-    const sideFadeW = p.width * 0.36;
-    const bandY = centerY - bandH * 0.5;
-    const coreBandX = (p.width - coreBandW) * 0.5;
-    const leftOuterX = coreBandX - sideFadeW;
-    const rightOuterX = coreBandX + coreBandW + sideFadeW - 1;
-
+    // 压暗背景，让前景内容更突出
     p.push();
     p.resetMatrix();
     p.noStroke();
-
-    // 两侧渐隐光带
-    for (let i = 0; i < sideFadeW; i++) {
-      const t = i / Math.max(1, sideFadeW - 1);
-      p.fill(255, 255, 255, (1 - t) * 108);
-      p.rect(leftOuterX + i, bandY, 1, bandH);
-      p.rect(rightOuterX - i, bandY, 1, bandH);
-    }
-
-    p.fill(255, 255, 255, 248);
-    p.textAlign(p.CENTER, p.CENTER);
-    if (Assets.customFont) p.textFont(Assets.customFont);
-    p.textStyle(p.BOLD);
-
-    const copy = this._getPageCopy();
-    const lineSize = Math.floor(p.width * 0.024);
-    p.textSize(lineSize);
-    p.text(copy.title, p.width * 0.5, centerY - lineSize * 0.65);
-    p.text(copy.titleZh, p.width * 0.5, centerY + lineSize * 0.65);
-
+    p.fill(18, 8, 30, 205);
+    p.rect(0, 0, p.width, p.height);
     p.pop();
   }
 }

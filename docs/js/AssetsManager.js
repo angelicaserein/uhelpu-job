@@ -75,6 +75,7 @@ export const Assets = {
   tileImage_ground: null,
   tileImage_platform: null,
   tileImage_wall: null,
+  tileImage_metalFill: null,
   tileImage_signboard: null,
   tileImage_signboard2: null,
   tileImage_box: null,
@@ -305,6 +306,10 @@ export const Assets = {
         p.loadImage("assets/images/tiles/TeleportPointOpen.png"),
         "传送点开启贴图",
       ),
+      this._safeLoad(
+        p.loadImage("assets/images/tiles/metal_fill.png"),
+        "无缝金属板填充贴图",
+      ),
     ];
 
     totalCount = loadPromises.length;
@@ -403,6 +408,7 @@ export const Assets = {
     this.bgImageLanguageChoice = results[73];
     this.tileImage_teleportPointClose = results[74];
     this.tileImage_teleportPointOpen = results[75];
+    this.tileImage_metalFill = results[76];
     this.achieveImgs = [
       results[59],
       results[60],

@@ -1,3 +1,4 @@
+import { TerrainRenderer } from "../game-entity-model/terrain/TerrainRenderer.js";
 import { LEVEL_REGISTRY } from "../level-registry.js";
 import { setGamePaused, isGamePaused } from "../game-runtime/GamePauseState.js";
 import { EventTypes } from "../event-system/EventTypes.js";
@@ -55,9 +56,6 @@ export class LevelManager {
     } else if (num.startsWith("special_level")) {
       prefix = "special_level";
       num = num.replace("special_level", "");
-    } else if (num.startsWith("demo2_level")) {
-      prefix = "demo2_level";
-      num = num.replace("demo2_level", "");
     } else {
       num = num.replace("level", "");
     }
@@ -312,6 +310,7 @@ export class LevelManager {
     this.level.clearCanvas &&
       this.level.clearCanvas(p, renderNudgeX, this.bgParallaxFactor);
 
+    TerrainRenderer.prepare(this.level.entities);
     p.push();
     p.translate(-renderNudgeX, 0);
     this.level.draw && this.level.draw(p);

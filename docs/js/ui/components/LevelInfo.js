@@ -9,7 +9,7 @@ export class LevelInfo {
    * @param {number} centerX - FollowImage 圆心 x（用于定位左右面板）
    * @param {number} centerY - FollowImage 圆心 y
    * @param {number} circleRadius - FollowImage 圆的半径
-   * @param {string} levelPrefix - 关卡标题前缀（如 'level', 'easy_level', 'demo2_level'），默认为 'level'
+   * @param {string} levelPrefix - 关卡标题前缀（如 'level', 'easy_level'），默认为 'level'
    */
   constructor(p, centerX, centerY, circleRadius, levelPrefix = "level") {
     this.p = p;
